@@ -1,6 +1,8 @@
 <?php  
-require "backendchallenge.php";
-$data= addList($list_name, $list_value);
+if($_SERVER['REQUEST_METHOD'] == "POST"){
+    require "backendchallenge.php";
+    $err= addList($list_name, $list_value);
+}
 ?>
 
 <!DOCTYPE html>
@@ -13,16 +15,18 @@ $data= addList($list_name, $list_value);
 </head>
 <body>
     <div class="w3-red w3-bar w3-center w3-padding">
-        <p><?=$data?></p>
+        <p><?=$err?></p>
     </div>
-    <h1>Voeg een lijst toe!</h1>
-    <form action="<?=htmlspecialchars($_SERVER['PHP_SELF']). '?confirm=yes'?>" method="post"> 
-        <input type="text" name="list_name" id="list_name" placeholder="Voer lijstnaam in">
-        <br>
-        <textarea name="list_value" id="list_value" cols="30" rows="10" placeholder="Lijst waarde"></textarea>
-        <br>
-        <button type="submit">MAAK</button>
-        <button type="submit">PAK VOORBEELD</button>
-    </form>
+    <div style="background: whitesmoke;" class="w3-container w3-center">
+        <h1>Voeg een lijst toe!</h1>
+        <form action="<?=htmlspecialchars($_SERVER['PHP_SELF']). '?confirm=yes'?>" method="post"> 
+            <input type="text" name="list_name" id="list_name" placeholder="Voer lijstnaam in">
+            <br>
+            <textarea name="list_value" id="list_value" cols="30" rows="10" placeholder="Lijst waarde"></textarea>
+            <br>
+            <button name="submit" type="submit" class="w3-green w3-round-xlarge w3-button">MAAK</button>
+            <button type="submit" class="w3-blue w3-round-xlarge w3-button">PAK VOORBEELD</button>
+        </form>
+    </div>
 </body>
 </html>

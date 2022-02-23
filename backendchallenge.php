@@ -27,27 +27,31 @@ function connect(){
 
 $name= $_POST["list_name"];
 $value= $_POST["list_value"];
-    if((isset($name) || isset($name)) && $_GET["confirm"] == 'yes'){
+    if($_SERVER['REQUEST_METHOD'] == "POST"){
         addList($name, $value);
     }elseif ($_GET["confirm"] == 'yes') {
         $data= getLists();
-        echo $data; 
+        print_r($data);
     }
 
 function addList($list_name, $list_value){
+    var_dump("a ". $list_name. "<br>");
+    var_dump("b " . $list_value). "<br>";
+    
     try {
         $conn= connect();
+        var_dump("ok ". $list_name . " + " . $list_value. "<br>");
+
         $stmt = $conn->prepare("INSERT INTO `list_info`(listname,listvalue) VALUES(:list_name,:list_value)");
-        $stmt->bindParam(':listname', $list_name);
+        $stmt->bindParam(':list_name', $list_name);
         $stmt->bindParam(':list_value', $list_value);
+
         $stmt->execute();
-        console_log("ERROR IETS WERKT NIET");
 
         $conn = null;
-    } catch (\Throwable $th) {
-        return $th;
-    }    
-        
+    } catch (\Throwable $err) {
+        return $err;
+    }
 }
 
 function getLists(){
