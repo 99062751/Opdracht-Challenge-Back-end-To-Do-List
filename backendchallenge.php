@@ -24,23 +24,19 @@ function connect(){
         echo "Connection failed: " . $e->getMessage();
     }
 }
-
-$name= $_POST["list_name"];
-$value= $_POST["list_value"];
-    if($_SERVER['REQUEST_METHOD'] == "POST"){
-        addList($name, $value);
-    }elseif ($_GET["confirm"] == 'yes') {
-        $data= getLists();
-        print_r($data);
+function controle(){
+    $name= $_POST["list_name"];
+    $value= $_POST["list_value"];    
+    if (!empty($name) && !empty($value)) {
+        return true;
+    }else{
+        return false;
     }
+}
 
-function addList($list_name, $list_value){
-    var_dump("a ". $list_name. "<br>");
-    var_dump("b " . $list_value). "<br>";
-    
+function addList($list_name, $list_value){    
     try {
         $conn= connect();
-        var_dump("ok ". $list_name . " + " . $list_value. "<br>");
 
         $stmt = $conn->prepare("INSERT INTO `list_info`(listname,listvalue) VALUES(:list_name,:list_value)");
         $stmt->bindParam(':list_name', $list_name);
@@ -49,18 +45,19 @@ function addList($list_name, $list_value){
         $stmt->execute();
 
         $conn = null;
-    } catch (\Throwable $err) {
-        return $err;
+        return [true, "Succesfully added list!"];
+    } catch (Exeception $err) {
+        return [false, $err->getMessage()];
     }
 }
 
-function getLists(){
-    $conn= connect();
+// function getLists(){
+//     $conn= connect();
 
-    $stmt = $conn->prepare("SELECT * FROM list_info");
-    $stmt->execute();
-    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+//     $stmt = $conn->prepare("SELECT * FROM list_info");
+//     $stmt->execute();
+//     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $conn = null;
-    return $data;
-}
+//     $conn = null;
+//     return $data;
+// }

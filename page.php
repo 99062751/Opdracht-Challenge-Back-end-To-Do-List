@@ -1,7 +1,13 @@
 <?php  
 if($_SERVER['REQUEST_METHOD'] == "POST"){
     require "backendchallenge.php";
-    $err= addList($list_name, $list_value);
+    $condition= controle();
+    if ($condition == true) {
+        $output= addList($_POST["list_name"], $_POST["list_value"]);
+    }else{
+        $err= "Inputs are not filled out"; 
+    }   
+    
 }
 ?>
 
@@ -14,9 +20,15 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
     <title>To Do List</title>
 </head>
 <body>
+    <?php if(isset($err)){?>
     <div class="w3-red w3-bar w3-center w3-padding">
         <p><?=$err?></p>
     </div>
+    <?php }elseif(isset($output)){?>
+        <div class="<?php $output[0] == true ? print('w3-green') : print('w3-red') ?> w3-bar w3-center w3-padding">
+        <p><?=$output[1]?></p>
+    </div>
+    <?php }?>
     <div style="background: whitesmoke;" class="w3-container w3-center">
         <h1>Voeg een lijst toe!</h1>
         <form action="<?=htmlspecialchars($_SERVER['PHP_SELF']). '?confirm=yes'?>" method="post"> 
