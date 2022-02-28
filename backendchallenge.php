@@ -25,9 +25,13 @@ function connect(){
     }
 }
 function controle(){
+    $id= $_GET["id"];
+    echo $id;
     $name= $_POST["list_name"];
     $value= $_POST["list_value"];    
-    if (!empty($name) && !empty($value)) {
+    $list_newname= $_POST["list_newname"];
+    $list_newvalue= $_POST["list_newvalue"];
+    if ((!empty($name) && !empty($value)) || !empty($list_newname) && !empty($list_newvalue)) {
         return true;
     }else{
         return false;
@@ -51,13 +55,61 @@ function addList($list_name, $list_value){
     }
 }
 
-// function getLists(){
-//     $conn= connect();
+function updateList($list_newname, $list_newvalue, $ID){ 
+       echo "aasje=". $ID;
+    try {
+        $conn= connect();
 
-//     $stmt = $conn->prepare("SELECT * FROM list_info");
-//     $stmt->execute();
-//     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = $conn->prepare("UPDATE `list_info` SET listname=:list_name, listvalue=:list_value WHERE id=:id");
+        $stmt->bindParam(':list_name', $list_newname);
+        $stmt->bindParam(':list_value', $list_newvalue);
+        $stmt->bindParam(':id', $ID);
 
-//     $conn = null;
-//     return $data;
-// }
+        $stmt->execute();
+
+        $conn = null;
+        return [true, "Succesfully updated list!"];
+    } catch (Exeception $err) {
+        return [false, $err->getMessage()];
+    }
+}
+
+function deleteList($ID){ 
+       
+    try {
+        $conn= connect();
+
+        $stmt = $conn->prepare("DELETE FROM `list_info` WHERE id=:id");
+        $stmt->bindParam(':id', $ID);
+
+        $stmt->execute();
+
+        $conn = null;
+        return [true, "Succesfully removed list!"];
+    } catch (Exeception $err) {
+        return [false, $err->getMessage()];
+    }
+}
+
+function getLists(){
+    $conn= connect();
+
+    $stmt = $conn->prepare("SELECT * FROM list_info");
+    $stmt->execute();
+    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $conn = null;
+    return $data;
+}
+
+function getOneList($id){
+    $conn= connect();
+
+    $stmt = $conn->prepare("SELECT * FROM list_info WHERE id=:id");
+    $stmt->bindParam(':id', $id);
+    $stmt->execute();
+    $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $conn = null;
+    return $data;
+}
