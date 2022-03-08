@@ -56,7 +56,6 @@ function addList($list_name, $list_value){
 }
 
 function updateList($list_newname, $list_newvalue, $ID){ 
-       echo "aasje=". $ID;
     try {
         $conn= connect();
 
@@ -109,6 +108,39 @@ function getOneList($id){
     $stmt->bindParam(':id', $id);
     $stmt->execute();
     $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $conn = null;
+    return $data;
+}
+
+
+function addTask($task_name, $list_id){    
+    try {
+        $conn= connect();
+
+        $stmt = $conn->prepare("INSERT INTO `task_info`(taskname, list_id, duration, status) VALUES(:task_name, :list_id, :duration, :status)");
+        $stmt->bindParam(':task_name', $task_name);
+        $stmt->bindParam(':list_id', $list_id);
+        $stmt->bindParam(':duration', $list_id);
+        $stmt->bindParam(':status', $list_id);
+
+        $stmt->execute();
+
+        $conn = null;
+        return [true, "Succesfully added task!"];
+    } catch (Exeception $err) {
+        return [false, $err->getMessage()];
+    }
+}
+
+function getTasks($id_list){
+    $conn= connect();
+
+    $stmt = $conn->prepare("SELECT * FROM task_info WHERE list_id= :list_id");
+    $stmt->bindParam(':list_id', $id_list);
+
+    $stmt->execute();
+    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $conn = null;
     return $data;

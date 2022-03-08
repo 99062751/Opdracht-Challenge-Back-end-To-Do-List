@@ -3,10 +3,15 @@ require "backendchallenge.php";
 $listdata= getLists();
 require "templates/header.php";
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if(!empty($_POST["task_card"])){
+        addTask($_POST["task_card"], $_POST["id_list"]);
+    }
+}
 ?>
 
 <div style="background: whitesmoke;" class="w3-bar w3-center">
-    <h1 class="">Overview lists</h1>
+    <h1 class="">Overview lists<a class="w3-right w3-button w3-blue" href="create_list.php">+</a></h1>
 </div>
 <!-- <div class="w3-margin-top w3-container w3-center">
     <div id="vak1" class="w3-third">
@@ -30,11 +35,29 @@ require "templates/header.php";
 
             <div class="w3-white">
                 <p><?=$d["listvalue"]. "<br>" ?></p>
+                <?php 
+                    $task_data= getTasks($d["id"]);
+                    foreach($task_data as $data2 => $e){ ?>
+                        <div contentEditable="true" onMouseOver="this.style.color='green'" onMouseOut="this.style.color='black'"  style="background-color: whitesmoke; padding: 2px;"class="w3-margin-bottom">
+                            <p ><?=$e["taskname"]?></p>
+                            <p ><?=$e["duration"]?></p>
+                            <p ><?=$e["status"]?></p>
+                        </div>
+                    <?php   } ?>
                 <?php if ((isset($_GET["add"]) && $_GET["add"] == "yes") && $d["id"] == $_GET["id"]){ ?>
                     <div>
-                        <textarea name="task_card" id="s" cols="15" rows="3"></textarea>
-                        <button name="task_submit" type="submit">Add</button>
-                        <button type="task_cancel">Cancel</button>
+                        <form action="<?=htmlspecialchars($_SERVER['PHP_SELF'])?>" method="post">
+                            <input type="text" name="task_card" id="">
+                            <input type="number" name="task_time" id="" placeholder="Duur in minuten">
+                            <select name="status_select" id="status_selector">
+                                <option value="to_do">To do</option>
+                                <option value="in_progress">In progress</option>
+                                <option value="done">Done</option>
+                            </select>
+                            <input type="hidden" name="id_list" value="<?=$d["id"]?>">
+                            <button name="task_submit" type="submit">Add</button>
+                            <button type="task_cancel">Cancel</button>
+                        </form>
                     </div>
                 <?php } ?>
             </div>
@@ -43,4 +66,5 @@ require "templates/header.php";
     <!-- <a href="create_list.php" class="w3-button w3-blue">Add list</a> -->
 </div>
 
-<?php require "templates/footer.php" ?>
+</body>
+</html>
