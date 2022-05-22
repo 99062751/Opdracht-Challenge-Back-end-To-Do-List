@@ -26,7 +26,7 @@ require "templates/header.php";
         <form action="<?=htmlspecialchars($_SERVER['PHP_SELF']). '?confirm=yes'?>" method="post"> 
             <input type="text" name="list_name" id="list_name" placeholder="Voer lijstnaam in">
             <br>
-            <textarea name="list_value" id="list_value" cols="30" rows="10" placeholder="Lijst waarde"></textarea>
+            <textarea name="list_value" id="list_value" cols="30" rows="10" placeholder="Lijst beschrijving"></textarea>
             <br>
             <button name="submit" type="submit" class="w3-green w3-round-xlarge w3-button">ADD</button>
         </form>

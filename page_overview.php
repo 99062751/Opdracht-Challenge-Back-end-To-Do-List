@@ -4,13 +4,26 @@ $listdata= getLists();
 require "templates/header.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if(!empty($_POST["task_card"])){
-        addTask($_POST["task_card"], $_POST["id_list"]);
+    if(isset($_POST["task_submit"])){
+        echo $_POST["task_card"], $_POST["id_list"], $_POST["task_duration"], $_POST["status_select"];
+        addTask($_POST["task_card"], $_POST["id_list"], $_POST["task_duration"], $_POST["status_select"]);
+    }elseif(isset($_POST["edit_submit"])){
+        updateTask($_POST["task_card"], $_POST["id_list"], $_POST["task_duration"] ,$_POST["status_select"], $_POST["id"]);
+    }elseif(isset($_POST["filter"])){
+        filter_tasks($_POST["listid"], $_POST["filterselect"]);
+    }elseif(isset($_POST["delete_task"])){
+        delete_task($_POST["id"], $_POST["id_list"]);
     }
+}elseif($_SERVER["REQUEST_METHOD"] == "GET"){
+    echo "Werkttttt";
+    $condition == true;
+}else {
+    $condition = false;
 }
 ?>
 
-<div style="background: whitesmoke;" class="w3-bar w3-center">
+
+<div style="background:[ whitesmoke;" class="w3-bar w3-center">
     <h1 class="">Overview lists<a class="w3-right w3-button w3-blue" href="create_list.php">+</a></h1>
 </div>
 <!-- <div class="w3-margin-top w3-container w3-center">
@@ -34,32 +47,88 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
 
             <div class="w3-white">
-                <p><?=$d["listvalue"]. "<br>" ?></p>
-                <?php 
-                    $task_data= getTasks($d["id"]);
-                    foreach($task_data as $data2 => $e){ ?>
-                        <div contentEditable="true" onMouseOver="this.style.color='green'" onMouseOut="this.style.color='black'"  style="background-color: whitesmoke; padding: 2px;"class="w3-margin-bottom">
-                            <p ><?=$e["taskname"]?></p>
-                            <p ><?=$e["duration"]?></p>
-                            <p ><?=$e["status"]?></p>
-                        </div>
-                    <?php   } ?>
+                <div class="card-header">
+                    <form action="<?=htmlspecialchars($_SERVER['PHP_SELF']). '?filter='. $_POST["filterselect"]?>" method="post">
+                        <p><?=$d["listvalue"]. "<br>" ?></p>
+                        <select name="filterselect" id="filterselect">
+                            <option value="none">None</option>
+                            <option value="duration">Duration</option>
+                            <option value="status">Status</option>
+                        </select>
+                        <input type="hidden" name="listid" value="<?=$d["id"]?>">
+                        <button name="filter" type="submit">filter</button>
+                    </form>
+                </div>
+
+                <div>
+                    <?php 
+                    if($condition == true){
+                        $filtered_data= filter_tasks($_POST["listid"], $_POST["filterselect"]);
+                        foreach($filtered_data as $data3 => $h){ ?>
+                                <!-- contentEditable="true" onMouseOver="this.style.color='green'" onMouseOut="this.style.color='black'"  -->
+                            <div style="background-color: whitesmoke; padding: 2px;"class="w3-margin-bottom">
+                                <div class="w3-center">
+                                    <span ><?=$h["taskname"]?></span> <br>
+                                    <span ><?=$h["duration"]. "mins" ?></span> <br>
+                                    <span ><?=$h["status"]?></span> <br>
+                                </div>
+                                <br>
+                                <a class="w3-left w3-blue" href="page_overview.php?edit=<?=true?>&id=<?=$d["id"]?>&real_id=<?=$e["id"]?>"><svg aria-hidden="true" focusable="false" style="width: 5%;" data-prefix="fas" data-icon="pencil-alt" class="svg-inline--fa fa-pencil-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"></path></svg></a>
+                            </div>
+                  <?php } 
+                    }else{
+                        $task_data= filter_tasks($d["id"], null);
+                        foreach($task_data as $data2 => $e){ ?>
+                                <!-- contentEditable="true" onMouseOver="this.style.color='green'" onMouseOut="this.style.color='black'"  -->
+                            <div style="background-color: whitesmoke; padding: 2px;"class="w3-margin-bottom">
+                                <div class="w3-center">
+                                    <span ><?=$e["taskname"]?></span> <br>
+                                    <span ><?=$e["duration"]. "mins" ?></span> <br>
+                                    <span ><?=$e["status"]?></span> <br>
+                                </div>
+                                <br>
+                                <a class="w3-left w3-blue" href="page_overview.php?edit=<?=true?>&id=<?=$d["id"]?>&real_id=<?=$e["id"]?>"><svg aria-hidden="true" focusable="false" style="width: 5%;" data-prefix="fas" data-icon="pencil-alt" class="svg-inline--fa fa-pencil-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"></path></svg></a>
+                            </div>
+                 <?php } 
+                    } ?>
+
                 <?php if ((isset($_GET["add"]) && $_GET["add"] == "yes") && $d["id"] == $_GET["id"]){ ?>
                     <div>
                         <form action="<?=htmlspecialchars($_SERVER['PHP_SELF'])?>" method="post">
                             <input type="text" name="task_card" id="">
-                            <input type="number" name="task_time" id="" placeholder="Duur in minuten">
+                            <input type="number" name="task_duration" id="" placeholder="Duur in minuten">
                             <select name="status_select" id="status_selector">
-                                <option value="to_do">To do</option>
-                                <option value="in_progress">In progress</option>
-                                <option value="done">Done</option>
+                                <option value="Todo">To do</option>
+                                <option value="In progress..">In progress</option>
+                                <option value="Done!">Done</option>
                             </select>
                             <input type="hidden" name="id_list" value="<?=$d["id"]?>">
                             <button name="task_submit" type="submit">Add</button>
                             <button type="task_cancel">Cancel</button>
                         </form>
                     </div>
-                <?php } ?>
+                <?php } elseif((isset($_GET["edit"]) && $_GET["edit"] == true)){ 
+                            $edit_data= getTask($_GET["id"], $_GET["real_id"]);
+                            foreach($edit_data as $o){ 
+                        ?>
+                    <div>
+                        <form action="<?=htmlspecialchars($_SERVER['PHP_SELF'])?>" method="post">
+                            <input type="text" name="task_card" id="" value="<?=$o["taskname"]?>">
+                            <input type="number" name="task_duration" id="" value="<?=$o["duration"]?>">
+                            <select name="status_select" id="status_selector" value="<?=$o["status"]?>">
+                                <option value="Todo">To do</option>
+                                <option value="In progress..">In progress</option>
+                                <option value="Done!">Done</option>
+                            </select>
+                            <input type="hidden" name="id" value="<?=$o["id"]?>">
+                            <input type="hidden" name="id_list" value="<?=$o["list_id"]?>">
+                            <button name="edit_submit" type="submit">Edit</button>
+                            <button type="">Cancel</button>
+                            <button name="delete_task" type="submit">Delete</button>
+                        </form>
+                    </div>    
+                <?php  } } ?>
+                </div>
             </div>
         </div>
     <?php } ?>

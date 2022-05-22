@@ -76,15 +76,35 @@ function updateList($list_newname, $list_newvalue, $ID){
 function deleteList($ID){ 
        
     try {
-        $conn= connect();
+        try{
+            $conn= connect();
 
-        $stmt = $conn->prepare("DELETE FROM `list_info` WHERE id=:id");
-        $stmt->bindParam(':id', $ID);
+            $stmt = $conn->prepare("DELETE FROM `task_info` WHERE list_id=:id_list");
+            $stmt->bindParam(':id_list', $ID);
+            $stmt->execute();
+            
+            $conn = null;
 
-        $stmt->execute();
+            $conn= connect();
 
-        $conn = null;
-        return [true, "Succesfully removed list!"];
+            $stmt = $conn->prepare("DELETE FROM `list_info` WHERE id=:id");
+            $stmt->bindParam(':id', $ID);
+
+            $stmt->execute();
+
+            $conn = null;
+            return [true, "Succesfully removed list!"];
+        } catch (Exeception $err){
+            $conn= connect();
+
+            $stmt = $conn->prepare("DELETE FROM `list_info` WHERE id=:id");
+            $stmt->bindParam(':id', $ID);
+
+            $stmt->execute();
+
+            $conn = null;
+            return [true, "Succesfully removed list!"];
+        }
     } catch (Exeception $err) {
         return [false, $err->getMessage()];
     }
@@ -114,15 +134,15 @@ function getOneList($id){
 }
 
 
-function addTask($task_name, $list_id){    
+function addTask($task_name, $list_id, $duration, $status){    
     try {
         $conn= connect();
 
         $stmt = $conn->prepare("INSERT INTO `task_info`(taskname, list_id, duration, status) VALUES(:task_name, :list_id, :duration, :status)");
         $stmt->bindParam(':task_name', $task_name);
         $stmt->bindParam(':list_id', $list_id);
-        $stmt->bindParam(':duration', $list_id);
-        $stmt->bindParam(':status', $list_id);
+        $stmt->bindParam(':duration', $duration);
+        $stmt->bindParam(':status', $status);
 
         $stmt->execute();
 
@@ -133,15 +153,96 @@ function addTask($task_name, $list_id){
     }
 }
 
-function getTasks($id_list){
+function getTask($id_list, $real_id){
+    $conn= connect();
+
+    $stmt = $conn->prepare("SELECT * FROM task_info WHERE list_id= :list_id AND id=:real_id");
+    $stmt->bindParam(':list_id', $id_list);
+    $stmt->bindParam(':real_id', $real_id);
+    
+    $stmt->execute();
+    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $real_id= "";
+    $conn = null;
+    return $data;
+}
+
+function getAllTasks($id_list){
     $conn= connect();
 
     $stmt = $conn->prepare("SELECT * FROM task_info WHERE list_id= :list_id");
     $stmt->bindParam(':list_id', $id_list);
-
+    
     $stmt->execute();
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     $conn = null;
     return $data;
+}
+
+function updateTask($task_name, $list_id, $duration, $status, $id){
+    try {
+        $conn= connect();
+
+        $stmt = $conn->prepare("UPDATE `task_info` SET taskname= :task_name, list_id=:list_id, duration=:duration, status=:status WHERE id=:id");
+        $stmt->bindParam(':task_name', $task_name);
+        $stmt->bindParam(':list_id', $list_id);
+        $stmt->bindParam(':duration', $duration);
+        $stmt->bindParam(':status', $status);
+        $stmt->bindParam(':id', $id);
+
+        $stmt->execute();
+
+        $conn = null;
+        return [true, "Succesfully updated task!"];
+    } catch (Exeception $err) {
+        return [false, $err->getMessage()];
+    }
+}
+
+function delete_task($id, $id_list){
+    try{
+        $conn= connect();
+
+        $stmt = $conn->prepare("DELETE FROM `task_info` WHERE id=:id AND list_id=:id_list");
+        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':id_list', $id_list);
+        $stmt->execute();
+        
+        $conn = null;
+        return [true, "Succesfully removed task!"];
+    } catch (Exeception $err) {
+        return [false, $err->getMessage()];
+    }
+}
+
+
+
+function filter_tasks($id_list, $filter){
+    if(is_null($filter) || empty($filter) || $filter == "none"){
+        echo "filter= none or status";
+        $conn= connect();
+
+        $stmt = $conn->prepare("SELECT * FROM task_info WHERE list_id= :list_id");
+        $stmt->bindParam(':list_id', $id_list);
+        
+        $stmt->execute();
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $data;
+    }else{
+        echo "test";
+        try {
+            $conn= connect();
+            $stmt = $conn->prepare("SELECT * FROM task_info WHERE list_id = :list_id ORDER BY status :fil");
+            
+            $stmt->bindParam(':list_id', $id_list);
+            $stmt->bindParam(':fil', $filter);
+    
+            $stmt->execute();
+            echo "works, function executed";
+            $conn = null;
+        } catch (Exeception $err) {
+            return [false, $err->getMessage()];
+        }
+    }
 }
