@@ -13,7 +13,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         filter_tasks($_POST["listid"], $_POST["filterselect"]);
     }elseif(isset($_POST["delete_task"])){
         delete_task($_POST["id"], $_POST["id_list"]);
+    }elseif(isset($_POST["sortbydur"])){
+        sort_tasks($_POST["listid"]);
     }
+    
 }elseif($_SERVER["REQUEST_METHOD"] == "GET"){
     echo "Werkttttt";
     $condition == true;
@@ -48,15 +51,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <div class="w3-white">
                 <div class="card-header">
-                    <form action="<?=htmlspecialchars($_SERVER['PHP_SELF']). '?filter='. $_POST["filterselect"]?>" method="post">
+                    <form action="<?=htmlspecialchars($_SERVER['PHP_SELF'])?>" method="post">
                         <p><?=$d["listvalue"]. "<br>" ?></p>
                         <select name="filterselect" id="filterselect">
                             <option value="none">None</option>
-                            <option value="duration">Duration</option>
-                            <option value="status">Status</option>
+                            <option value="Todo">To do</option>
+                            <option value="In progress..">In progress..</option>
+                            <option value="Done!">Done</option>
                         </select>
                         <input type="hidden" name="listid" value="<?=$d["id"]?>">
                         <button name="filter" type="submit">filter</button>
+                        <button name="sortbydur" type="submit">sort by duration</button>
                     </form>
                 </div>
 
@@ -98,9 +103,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <input type="text" name="task_card" id="">
                             <input type="number" name="task_duration" id="" placeholder="Duur in minuten">
                             <select name="status_select" id="status_selector">
-                                <option value="Todo">To do</option>
-                                <option value="In progress..">In progress</option>
-                                <option value="Done!">Done</option>
+                                <option value="'Todo'">To do</option>
+                                <option value="'In progress..'">In progress</option>
+                                <option value="'Done!'">Done</option>
                             </select>
                             <input type="hidden" name="id_list" value="<?=$d["id"]?>">
                             <button name="task_submit" type="submit">Add</button>

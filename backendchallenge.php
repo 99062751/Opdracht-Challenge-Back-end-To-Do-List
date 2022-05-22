@@ -113,7 +113,7 @@ function deleteList($ID){
 function getLists(){
     $conn= connect();
 
-    $stmt = $conn->prepare("SELECT * FROM list_info");
+    $stmt = $conn->prepare("SELECT * FROM `list_info`");
     $stmt->execute();
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -124,7 +124,7 @@ function getLists(){
 function getOneList($id){
     $conn= connect();
 
-    $stmt = $conn->prepare("SELECT * FROM list_info WHERE id=:id");
+    $stmt = $conn->prepare("SELECT * FROM `list_info` WHERE id=:id");
     $stmt->bindParam(':id', $id);
     $stmt->execute();
     $data = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -156,7 +156,7 @@ function addTask($task_name, $list_id, $duration, $status){
 function getTask($id_list, $real_id){
     $conn= connect();
 
-    $stmt = $conn->prepare("SELECT * FROM task_info WHERE list_id= :list_id AND id=:real_id");
+    $stmt = $conn->prepare("SELECT * FROM `task_info` WHERE list_id= :list_id AND id=:real_id");
     $stmt->bindParam(':list_id', $id_list);
     $stmt->bindParam(':real_id', $real_id);
     
@@ -170,7 +170,7 @@ function getTask($id_list, $real_id){
 function getAllTasks($id_list){
     $conn= connect();
 
-    $stmt = $conn->prepare("SELECT * FROM task_info WHERE list_id= :list_id");
+    $stmt = $conn->prepare("SELECT * FROM `task_info` WHERE list_id= :list_id");
     $stmt->bindParam(':list_id', $id_list);
     
     $stmt->execute();
@@ -222,7 +222,7 @@ function filter_tasks($id_list, $filter){
         echo "filter= none or status";
         $conn= connect();
 
-        $stmt = $conn->prepare("SELECT * FROM task_info WHERE list_id= :list_id");
+        $stmt = $conn->prepare("SELECT * FROM `task_info` WHERE list_id= :list_id");
         $stmt->bindParam(':list_id', $id_list);
         
         $stmt->execute();
@@ -230,10 +230,10 @@ function filter_tasks($id_list, $filter){
         $conn = null;
         return $data;
     }else{
-        echo "test";
+        echo $filter;
         try {
             $conn= connect();
-            $stmt = $conn->prepare("SELECT * FROM task_info WHERE list_id = :list_id ORDER BY status :fil");
+            $stmt = $conn->prepare("SELECT * FROM `task_info` WHERE list_id = :list_id AND status=':fil'");
             
             $stmt->bindParam(':list_id', $id_list);
             $stmt->bindParam(':fil', $filter);
@@ -241,8 +241,29 @@ function filter_tasks($id_list, $filter){
             $stmt->execute();
             echo "works, function executed";
             $conn = null;
-        } catch (Exeception $err) {
+        } catch (Exeception $err) { 
             return [false, $err->getMessage()];
         }
+    }
+}
+
+function sort_tasks($listid){
+    try {
+        $conn= connect();
+        $stmt = $conn->prepare("SELECT * FROM `task_info` WHERE list_id= :idlist ORDER BY duration condition");
+        $stmt->bindParam(':idlist', $listid);
+        $stmt->bindParam(':condition', $cond);
+
+        $stmt->execute();
+        echo "works, function executed2";
+        $conn = null;
+
+        if($cond == "ASC"){
+
+        }else{
+
+        }
+    } catch (Exeception $err) { 
+        return [false, $err->getMessage()];
     }
 }
