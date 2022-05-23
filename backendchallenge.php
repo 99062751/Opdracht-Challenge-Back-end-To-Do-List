@@ -217,30 +217,42 @@ function delete_task($id, $id_list){
 
 
 
-function filter_tasks($id_list, $filter){
+function filter_tasks($id_list, $filter, $descorasc = "ASC"){
+    echo $descorasc;
     if(is_null($filter) || empty($filter) || $filter == "none"){
         echo "filter= none or status";
         $conn= connect();
-
-        $stmt = $conn->prepare("SELECT * FROM `task_info` WHERE list_id= :list_id");
+        $stmt; 
+        if($descorasc == "ASC"){
+            $stmt = $conn->prepare("SELECT * FROM `task_info` WHERE list_id = :list_id ORDER BY duration ASC");
+        }else{
+            $stmt = $conn->prepare("SELECT * FROM `task_info` WHERE list_id = :list_id ORDER BY duration DESC");
+        }
         $stmt->bindParam(':list_id', $id_list);
-        
+
         $stmt->execute();
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $conn = null;
         return $data;
     }else{
-        echo $filter;
         try {
             $conn= connect();
-            $stmt = $conn->prepare("SELECT * FROM `task_info` WHERE list_id = :list_id AND status=':fil'");
+
+            $stmt; 
+            if($descorasc == "ASC"){
+                $stmt = $conn->prepare("SELECT * FROM `task_info` WHERE list_id = :list_id AND status=:fil ORDER BY duration ASC");
+            }else{
+                $stmt = $conn->prepare("SELECT * FROM `task_info` WHERE list_id = :list_id AND status=:fil ORDER BY duration DESC");
+            }
             
             $stmt->bindParam(':list_id', $id_list);
             $stmt->bindParam(':fil', $filter);
     
             $stmt->execute();
-            echo "works, function executed";
+            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $conn = null;
+            var_dump($data);
+            return $data;
         } catch (Exeception $err) { 
             return [false, $err->getMessage()];
         }
@@ -249,20 +261,8 @@ function filter_tasks($id_list, $filter){
 
 function sort_tasks($listid){
     try {
-        $conn= connect();
-        $stmt = $conn->prepare("SELECT * FROM `task_info` WHERE list_id= :idlist ORDER BY duration condition");
-        $stmt->bindParam(':idlist', $listid);
-        $stmt->bindParam(':condition', $cond);
+        
 
-        $stmt->execute();
-        echo "works, function executed2";
-        $conn = null;
-
-        if($cond == "ASC"){
-
-        }else{
-
-        }
     } catch (Exeception $err) { 
         return [false, $err->getMessage()];
     }

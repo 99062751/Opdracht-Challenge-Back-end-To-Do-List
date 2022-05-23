@@ -9,20 +9,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         addTask($_POST["task_card"], $_POST["id_list"], $_POST["task_duration"], $_POST["status_select"]);
     }elseif(isset($_POST["edit_submit"])){
         updateTask($_POST["task_card"], $_POST["id_list"], $_POST["task_duration"] ,$_POST["status_select"], $_POST["id"]);
-    }elseif(isset($_POST["filter"])){
-        filter_tasks($_POST["listid"], $_POST["filterselect"]);
     }elseif(isset($_POST["delete_task"])){
         delete_task($_POST["id"], $_POST["id_list"]);
-    }elseif(isset($_POST["sortbydur"])){
-        sort_tasks($_POST["listid"]);
     }
     
 }elseif($_SERVER["REQUEST_METHOD"] == "GET"){
     echo "Werkttttt";
-    $condition == true;
+    $condition = true;
 }else {
     $condition = false;
 }
+
+$sortparam = isset($_POST["sortbydur"]) ? $_POST["sortbydur"] : "ASC"; 
+echo $sortparam;
+
+$filterparam = isset($_POST["filterselect"]) ? $_POST["filterselect"] : "none"; 
 ?>
 
 
@@ -61,14 +62,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </select>
                         <input type="hidden" name="listid" value="<?=$d["id"]?>">
                         <button name="filter" type="submit">filter</button>
-                        <button name="sortbydur" type="submit">sort by duration</button>
+                        <input type="hidden" value="<?= $_POST['status_select']?>" name="">
+                        <button name="sortbydur" value="<?= isset($_POST["sortbydur"]) && $_POST["sortbydur"] == "ASC" ? "DESC" : "ASC" ?>" type="submit">sort by duration</button>
                     </form>
                 </div>
 
                 <div>
                     <?php 
-                    if($condition == true){
-                        $filtered_data= filter_tasks($_POST["listid"], $_POST["filterselect"]);
+                    if(isset($_POST["filterselect"])){
+                        $filtered_data= filter_tasks($_POST["listid"], $filterparam, $sortparam);
                         foreach($filtered_data as $data3 => $h){ ?>
                                 <!-- contentEditable="true" onMouseOver="this.style.color='green'" onMouseOut="this.style.color='black'"  -->
                             <div style="background-color: whitesmoke; padding: 2px;"class="w3-margin-bottom">
@@ -82,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </div>
                   <?php } 
                     }else{
-                        $task_data= filter_tasks($d["id"], null);
+                        $task_data= filter_tasks($d["id"], $filterparam, $sortparam);
                         foreach($task_data as $data2 => $e){ ?>
                                 <!-- contentEditable="true" onMouseOver="this.style.color='green'" onMouseOut="this.style.color='black'"  -->
                             <div style="background-color: whitesmoke; padding: 2px;"class="w3-margin-bottom">
