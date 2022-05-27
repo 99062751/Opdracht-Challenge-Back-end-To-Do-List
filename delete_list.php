@@ -2,7 +2,6 @@
 require "backendchallenge.php";
 $id_list= $_GET["id"];
 $listdata= getOneList($id_list);
-echo "ok ". $id_list;
 
 if($_SERVER['REQUEST_METHOD'] == "POST"){
     $condition= controle();

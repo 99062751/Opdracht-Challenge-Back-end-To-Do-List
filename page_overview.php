@@ -5,7 +5,6 @@ require "templates/header.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if(isset($_POST["task_submit"])){
-        echo $_POST["task_card"], $_POST["id_list"], $_POST["task_duration"], $_POST["status_select"];
         addTask($_POST["task_card"], $_POST["id_list"], $_POST["task_duration"], $_POST["status_select"]);
     }elseif(isset($_POST["edit_submit"])){
         updateTask($_POST["task_card"], $_POST["id_list"], $_POST["task_duration"] ,$_POST["status_select"], $_POST["id"]);
@@ -14,14 +13,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     
 }elseif($_SERVER["REQUEST_METHOD"] == "GET"){
-    echo "Werkttttt";
     $condition = true;
 }else {
     $condition = false;
 }
 
 $sortparam = isset($_POST["sortbydur"]) ? $_POST["sortbydur"] : "ASC"; 
-echo $sortparam;
 
 $filterparam = isset($_POST["filterselect"]) ? $_POST["filterselect"] : "none"; 
 ?>
@@ -30,19 +27,7 @@ $filterparam = isset($_POST["filterselect"]) ? $_POST["filterselect"] : "none";
 <div style="background:[ whitesmoke;" class="w3-bar w3-center">
     <h1 class="">Overview lists<a class="w3-right w3-button w3-blue" href="create_list.php">+</a></h1>
 </div>
-<!-- <div class="w3-margin-top w3-container w3-center">
-    <div id="vak1" class="w3-third">
-        <h4 class="w3-red w3-padding">Lijstvak 1</h4>
-    </div>
 
-    <div id="vak2" class="w3-third">
-        <h4 class="w3-pink w3-padding">Lijstvak 2</h4>
-    </div>
-
-    <div id="vak3" class="w3-third">
-        <h4 class="w3-green w3-padding">Lijstvak 3</h4>
-    </div>
-</div> -->
 <div id="card-container" class="w3-container w3-center">
     <?php foreach($listdata as $data => $d){ ?>
         <div class="w3-card-2 w3-center w3-third w3-small w3-margin">
@@ -139,7 +124,6 @@ $filterparam = isset($_POST["filterselect"]) ? $_POST["filterselect"] : "none";
             </div>
         </div>
     <?php } ?>
-    <!-- <a href="create_list.php" class="w3-button w3-blue">Add list</a> -->
 </div>
 
 </body>

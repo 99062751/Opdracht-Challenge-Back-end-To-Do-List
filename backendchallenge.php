@@ -21,12 +21,11 @@ function connect(){
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         return $conn;
     } catch(PDOException $e){
-        echo "Connection failed: " . $e->getMessage();
+        return "Connection failed: " . $e->getMessage();
     }
 }
 function controle(){
     $id= $_GET["id"];
-    echo $id;
     $name= $_POST["list_name"];
     $value= $_POST["list_value"];    
     $list_newname= $_POST["list_newname"];
@@ -218,9 +217,7 @@ function delete_task($id, $id_list){
 
 
 function filter_tasks($id_list, $filter, $descorasc = "ASC"){
-    echo $descorasc;
     if(is_null($filter) || empty($filter) || $filter == "none"){
-        echo "filter= none or status";
         $conn= connect();
         $stmt; 
         if($descorasc == "ASC"){
