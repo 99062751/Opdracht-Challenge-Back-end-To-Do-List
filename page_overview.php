@@ -55,7 +55,6 @@ $filterparam = isset($_POST["filterselect"]) ? $_POST["filterselect"] : "none";
                 <div>
                     <?php 
                     if(isset($_POST["filterselect"])){
-                        echo $filterparam;
                         $filtered_data= filter_tasks($_POST["listid"], $filterparam, $sortparam);
                         foreach($filtered_data as $data3 => $h){ ?>
                                 <!-- contentEditable="true" onMouseOver="this.style.color='green'" onMouseOut="this.style.color='black'"  -->
