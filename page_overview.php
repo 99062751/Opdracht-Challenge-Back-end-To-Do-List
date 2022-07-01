@@ -42,7 +42,7 @@ $filterparam = isset($_POST["filterselect"]) ? $_POST["filterselect"] : "none";
                         <select name="filterselect" id="filterselect">
                             <option value="none">None</option>
                             <option value="Todo">To do</option>
-                            <option value="In progress..">In progress..</option>
+                            <option value="In progress">In progress..</option>
                             <option value="Done!">Done</option>
                         </select>
                         <input type="hidden" name="listid" value="<?=$d["id"]?>">
@@ -55,6 +55,7 @@ $filterparam = isset($_POST["filterselect"]) ? $_POST["filterselect"] : "none";
                 <div>
                     <?php 
                     if(isset($_POST["filterselect"])){
+                        echo $filterparam;
                         $filtered_data= filter_tasks($_POST["listid"], $filterparam, $sortparam);
                         foreach($filtered_data as $data3 => $h){ ?>
                                 <!-- contentEditable="true" onMouseOver="this.style.color='green'" onMouseOut="this.style.color='black'"  -->
@@ -90,9 +91,9 @@ $filterparam = isset($_POST["filterselect"]) ? $_POST["filterselect"] : "none";
                             <input type="text" name="task_card" id="">
                             <input type="number" name="task_duration" id="" placeholder="Duur in minuten">
                             <select name="status_select" id="status_selector">
-                                <option value="'Todo'">To do</option>
-                                <option value="'In progress'">In progress</option>
-                                <option value="'Done!'">Done</option>
+                                <option value="Todo">To do</option>
+                                <option value="In progress">In progress</option>
+                                <option value="Done!">Done</option>
                             </select>
                             <input type="hidden" name="id_list" value="<?=$d["id"]?>">
                             <button name="task_submit" type="submit">Add</button>
@@ -109,7 +110,7 @@ $filterparam = isset($_POST["filterselect"]) ? $_POST["filterselect"] : "none";
                             <input type="text" name="task_duration" id="" value="<?=$o["duration"]?>">
                             <select name="status_select" id="status_selector" value="<?=$o["status"]?>">
                                 <option value="Todo">To do</option>
-                                <option value="In progress..">In progress</option>
+                                <option value="In progress">In progress</option>
                                 <option value="Done!">Done</option>
                             </select>
                             <input type="hidden" name="id" value="<?=$o["id"]?>">
