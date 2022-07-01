@@ -91,7 +91,7 @@ $filterparam = isset($_POST["filterselect"]) ? $_POST["filterselect"] : "none";
                             <input type="number" name="task_duration" id="" placeholder="Duur in minuten">
                             <select name="status_select" id="status_selector">
                                 <option value="'Todo'">To do</option>
-                                <option value="'In progress..'">In progress</option>
+                                <option value="'In progress'">In progress</option>
                                 <option value="'Done!'">Done</option>
                             </select>
                             <input type="hidden" name="id_list" value="<?=$d["id"]?>">
@@ -106,7 +106,7 @@ $filterparam = isset($_POST["filterselect"]) ? $_POST["filterselect"] : "none";
                     <div>
                         <form action="<?=htmlspecialchars($_SERVER['PHP_SELF'])?>" method="post">
                             <input type="text" name="task_card" id="" value="<?=$o["taskname"]?>">
-                            <input type="number" name="task_duration" id="" value="<?=$o["duration"]?>">
+                            <input type="text" name="task_duration" id="" value="<?=$o["duration"]?>">
                             <select name="status_select" id="status_selector" value="<?=$o["status"]?>">
                                 <option value="Todo">To do</option>
                                 <option value="In progress..">In progress</option>

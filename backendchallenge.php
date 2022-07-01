@@ -248,7 +248,6 @@ function filter_tasks($id_list, $filter, $descorasc = "ASC"){
             $stmt->execute();
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $conn = null;
-            var_dump($data);
             return $data;
         } catch (Exeception $err) { 
             return [false, $err->getMessage()];
